@@ -18,21 +18,6 @@ import com.windfall.testapp.processors.MapToGrid;
 public class test_Spreadsheet {
 	final Path path = Paths.get("resources/csv_input/input.csv");
 
-
-//	public static void test_program_data () {
-//		Spreadsheet.getProgramData().entrySet().stream().forEach( (e) -> {
-//			System.out.format("%-10s -%s-%n", e.getKey(),e.getValue());
-//		});
-//	}
-
-//	public static void test_column_alphabet() {
-//		Spreadsheet s = new Spreadsheet();
-//		for (int i=0; i<=1000; i++) {
-//			s.toAlphabeticRadix(i);
-//			//System.out.printf("%d -- %s\n", i, s.toAlphabeticRadix(i));
-//		}
-//	}
-
 	public static void test_main() {
 		String [] args = {};
 		try {
@@ -91,7 +76,7 @@ public class test_Spreadsheet {
 	
 	public static void test_FileWrite() {
 		System.out.println("File Write Test");
-		Path p = Paths.get(CsvTestFiles.MORE_REFERENCES.path().toString() + "-output");
+		Path p = Paths.get(CsvTestFiles.MORE_REFERENCES.path().getParent() + "/test_FileWrite.txt");
 		System.out.println(p);
 		CSVFileWriter writer = new CSVFileWriter(p);
 		writer.write("test");
@@ -135,16 +120,15 @@ public class test_Spreadsheet {
 	
 
 	public static void main (String[] args) {
-		//test_program_data();
-		//test_column_alphabet();
-		//test_CellProcessor();
-		//test_CSVMap();
-		//test_IndexToSpeadsheetLocationMapper();
-		//test_CSVMapProcessor();
-		//test_MapToGrid();
-		//test_FileWrite();
-		//test_GridToFile(CSVFILES.MORE_REFERENCES);
-		test_bulkrun();
+		
+		test_CellProcessor();
+		test_CSVMap();
+		test_IndexToSpeadsheetLocationMapper();
+		test_CSVMapProcessor();
+		test_MapToGrid();
+		test_FileWrite();
+		test_GridToFile(CsvTestFiles.MORE_REFERENCES);
+		//test_bulkrun();
 		//test_main();
 
 
