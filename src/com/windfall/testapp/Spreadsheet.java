@@ -3,8 +3,6 @@ package com.windfall.testapp;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
-import java.util.TreeMap;
 
 import com.windfall.testapp.exception.CircularReferenceException;
 import com.windfall.testapp.exception.FieldCountMismatchException;
@@ -20,55 +18,67 @@ import java.util.logging.Logger;
 
 public class Spreadsheet {
 
-	private static final Logger logger = Logger.getLogger(Spreadsheet.class.getName());
-	
+	private static final Logger LOG = Logger.getLogger(Spreadsheet.class.getName());
+
 	//APP IDENTIFICATION
 	private static final String NAME = "SPREADSHEET";
 	private static final String VERSION = "1.0.0.";
 
-	public CSVFileParserOutput processCSVFile(Path p) {
+	public CSVFileParserOutput processCSVFile(Path p) throws IOException, FieldCountMismatchException {
 		CSVFileParser fp = new CSVFileParser();
 		CSVFileParserOutput cfpo=null;
 		try {
 			cfpo= fp.csvToMap(p);
 		} catch (IOException | FieldCountMismatchException e) {
-			logger.severe(e.getMessage());
-			//System.exit(-1); //file should be checked
+			LOG.severe(e.getMessage());
+			throw e;
 		}
 		return cfpo;	
 	}
 
-	public CSVMap getCSVMap (Path p) {
+	public CSVMap getCSVMap (Path p) throws IOException, FieldCountMismatchException {
 		return processCSVFile(p).csvMap;
 	}
+
+	/* default */
 	public void run(){
 		CsvTestFiles file = CsvTestFiles.MORE_REFERENCES;
 		run(file.path());
 	}
+
+	/* args */
 	public void run(String ...args){
-		
+
 		if (args==null||args.length==0) run();
 		for (String path : args) {
 			run(Paths.get(path));
 		}
 	}
 
+	/* main execution */
 	public void run(Path p) {
-		
-		Spreadsheet s = new Spreadsheet();
-		CSVFileParserOutput cfpo = s.processCSVFile(p);
-		if (cfpo.csvMap.getCsvMap().isEmpty()) return;
+
+		CSVFileParserOutput cfpo = null;
+
+		try {
+			cfpo = this.processCSVFile(p);
+		} catch (IOException | FieldCountMismatchException e1) {
+			//LOG.severe(e1.getMessage());
+			return;
+		}
+
+		if (cfpo == null) return;
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();
 		try {
 			mapProcessor.processMap(cfpo.csvMap);
 		} catch (CircularReferenceException e) {
-			logger.warning(e.getMessage());
+			LOG.warning(e.getMessage());
 			return;
 		}
 
 		MapToGrid mtg = new MapToGrid(cfpo);
 		CSVFileWriter writer = new CSVFileWriter(p);
-		
+
 		mtg.mapToGrid(cfpo.csvMap);
 		writer.write(mtg.dump());
 	}

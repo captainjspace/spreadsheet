@@ -58,7 +58,7 @@ public class CSVFileParser {
 		        	
 		        } else if ( rowFields!=maxFields && maxFields!=0) {
 		        	fs.maxFieldsInRow = maxFields;
-		        	String msg = String.format("Check Data File: Row #%d contains %d fields", 
+		        	String msg = String.format("FieldCountMismatchException: Row #%d contains %d fields", 
 		        			fs.rowCount, rowFields);
 		        	throw new FieldCountMismatchException(msg);
 		        	
@@ -70,7 +70,7 @@ public class CSVFileParser {
 		    LOG.info(fs.getStats());
 		    reader.close();
 		} catch (IOException x) {
-		    LOG.warning(String.format("IOException: %n%s%n", x));
+		    LOG.severe(String.format("IOException: %n%s%n", x));
 		    throw x;
 		} finally {
 			if (scanner != null) scanner.close();
