@@ -1,2 +1,5 @@
 Questions:
-* Do we want to resolve - offsheet references or text to 0.00
+* Do we want to resolve?  Currently - offsheet references or text to 0.00
+* I have default test files - csv_input , csv_output dirs
+** How do we want to pass files as args?
+* Not specifically optimized.

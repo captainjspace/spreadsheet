@@ -11,23 +11,29 @@ import java.util.logging.Logger;
 public class CSVFileWriter {
 	
 	private static final Logger LOG = Logger.getLogger(CSVFileWriter.class.getName());
-	private static final String OUTPUT_DIR = "/csv_output/";
+	private static final String OUTPUT_DIR = "output/csv_output/";
 	private Charset charset = Charset.forName("UTF-8");
 
 	private Path outPath;
 	public CSVFileWriter(Path p) {
-		this.outPath=Paths.get(p.getParent().getParent() + OUTPUT_DIR + p.getFileName());
+		init(p);
 	}
 
-	public void write(String output) {
-		LOG.info(String.format("%nWriting to %s%n", outPath));
-		
+	public void init(Path p) {
+		String outputFile = p.getFileName().toString();
+		int pos = outputFile.lastIndexOf(".");
+		if (pos > 0) {
+		    outputFile = outputFile.substring(0, pos) + "-output.csv";
+		}
+		this.outPath=Paths.get(OUTPUT_DIR + outputFile);
 		try {
 			Files.createDirectories(this.outPath.getParent());
 		} catch (IOException e1) {
 			LOG.severe("Failed to Create Output Directory");
 		}
-		
+	}
+	public void write(String output) {
+		LOG.info(String.format("%nWriting to %s%n", outPath));
 		try (BufferedWriter writer = Files.newBufferedWriter(outPath,charset)) {
 			writer.write(output);
 			writer.flush();

@@ -41,12 +41,22 @@ public class Spreadsheet {
 	public CSVMap getCSVMap (Path p) {
 		return processCSVFile(p).csvMap;
 	}
-
-	public void run() {
-		
+	public void run(){
 		CsvTestFiles file = CsvTestFiles.MORE_REFERENCES;
+		run(file.path());
+	}
+	public void run(String ...args){
+		
+		if (args==null||args.length==0) run();
+		for (String path : args) {
+			run(Paths.get(path));
+		}
+	}
+
+	public void run(Path p) {
+		
 		Spreadsheet s = new Spreadsheet();
-		CSVFileParserOutput cfpo = s.processCSVFile(file.path());
+		CSVFileParserOutput cfpo = s.processCSVFile(p);
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();
 		try {
 			mapProcessor.processMap(cfpo.csvMap);
@@ -56,7 +66,6 @@ public class Spreadsheet {
 		}
 
 		MapToGrid mtg = new MapToGrid(cfpo);
-		Path p = Paths.get(file.path().toString() + "-output");
 		CSVFileWriter writer = new CSVFileWriter(p);
 		
 		mtg.mapToGrid(cfpo.csvMap);
@@ -72,7 +81,7 @@ public class Spreadsheet {
 		lc.init();
 		//initialise spreadsheet
 		Spreadsheet s = new Spreadsheet();
-		s.run();
+		s.run(args);
 		Logger.getGlobal().info(String.format("Execution Time: %.2f%n",(System.currentTimeMillis()-start)/1000.0));
 	}
 
