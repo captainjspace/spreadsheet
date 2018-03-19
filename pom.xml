@@ -1,0 +1,41 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>Spreadsheet</groupId>
+	<artifactId>Spreadsheet</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Spreadsheet</name>
+	<description>CSV / Spreadsheet format cli tool</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.18.1</version>
+				<configuration>
+					<systemPropertyVariables>
+						<java.util.logging.config.class>
+							com.windfall.testapp.LoggingConfig
+						</java.util.logging.config.class>
+
+						<!-- If you prefer a file this will work too -->
+						<!--<java.util.logging.config.file> -->
+						<!--src/test/resources/logging.properties -->
+						<!--</java.util.logging.config.file> -->
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
