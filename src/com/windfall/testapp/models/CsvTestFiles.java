@@ -8,7 +8,7 @@ import java.nio.file.Paths;
  * @author joshualandman
  *
  */
-public enum CSVFILES {		
+public enum CsvTestFiles {		
 	SIMPLE(Paths.get("resources/csv_input/input.csv")),
 	MISMATCH_FIELDS(Paths.get("resources/csv_input/field-count-mismatch.csv")),
 	MORE_REFERENCES(Paths.get("resources/csv_input/references-stack.csv")),
@@ -19,7 +19,7 @@ public enum CSVFILES {
 
 	private Path path;
 	
-	CSVFILES(Path p) {
+	CsvTestFiles(Path p) {
 		this.path = p;
 	}
 	public Path path() {

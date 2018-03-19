@@ -7,7 +7,7 @@ import com.windfall.testapp.Spreadsheet;
 import com.windfall.testapp.exception.CircularReferenceException;
 import com.windfall.testapp.exception.FieldCountMismatchException;
 import com.windfall.testapp.io.CSVFileWriter;
-import com.windfall.testapp.models.CSVFILES;
+import com.windfall.testapp.models.CsvTestFiles;
 import com.windfall.testapp.models.CSVFileParserOutput;
 import com.windfall.testapp.models.CSVMap;
 import com.windfall.testapp.processors.CSVMapProcessor;
@@ -57,13 +57,13 @@ public class test_Spreadsheet {
 
 	public static void test_CSVMap() {
 		Spreadsheet s = new Spreadsheet();
-		CSVMap csvMap = s.getCSVMap(CSVFILES.SIMPLE.path());
+		CSVMap csvMap = s.getCSVMap(CsvTestFiles.SIMPLE.path());
 		csvMap.dump();
 	}
 
 	public static void test_CSVMapProcessor() {
 		Spreadsheet s = new Spreadsheet();
-		CSVMap csvMap = s.getCSVMap(CSVFILES.MORE_REFERENCES.path());
+		CSVMap csvMap = s.getCSVMap(CsvTestFiles.MORE_REFERENCES.path());
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();
 		try {
 			mapProcessor.processMap(csvMap);
@@ -76,7 +76,7 @@ public class test_Spreadsheet {
 	
 	public static void test_MapToGrid() {
 		Spreadsheet s = new Spreadsheet();
-		CSVFileParserOutput cfpo = s.processCSVFile(CSVFILES.MORE_REFERENCES.path());
+		CSVFileParserOutput cfpo = s.processCSVFile(CsvTestFiles.MORE_REFERENCES.path());
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();
 		try {
 			mapProcessor.processMap(cfpo.csvMap);
@@ -91,14 +91,14 @@ public class test_Spreadsheet {
 	
 	public static void test_FileWrite() {
 		System.out.println("File Write Test");
-		Path p = Paths.get(CSVFILES.MORE_REFERENCES.path().toString() + "-output");
+		Path p = Paths.get(CsvTestFiles.MORE_REFERENCES.path().toString() + "-output");
 		System.out.println(p);
 		CSVFileWriter writer = new CSVFileWriter(p);
 		writer.write("test");
 		
 	}
 	
-	public static void test_GridToFile(CSVFILES f) {
+	public static void test_GridToFile(CsvTestFiles f) {
 		System.out.printf("TESTING FILE: %s%n",f.path());
 		Spreadsheet s = new Spreadsheet();
 		CSVFileParserOutput cfpo = s.processCSVFile(f.path());
@@ -117,7 +117,7 @@ public class test_Spreadsheet {
 	}
 	
 	public static void test_bulkrun() {
-		for (CSVFILES f : CSVFILES.values()) {
+		for (CsvTestFiles f : CsvTestFiles.values()) {
 			try { 
 			  test_GridToFile(f);
 			} catch (Exception e) {

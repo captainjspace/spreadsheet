@@ -44,7 +44,7 @@ public class Spreadsheet {
 
 	public void run() {
 		
-		CSVFILES file = CSVFILES.GENERIC_DATA;
+		CsvTestFiles file = CsvTestFiles.MORE_REFERENCES;
 		Spreadsheet s = new Spreadsheet();
 		CSVFileParserOutput cfpo = s.processCSVFile(file.path());
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();

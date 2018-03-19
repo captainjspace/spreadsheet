@@ -143,7 +143,8 @@ public class CellProcessor {
 		}
 		cell.evaluated_formula=formula.toString();
 		cell.eval_ref_count += refCount;
-		if (refCount>0) cell.eval_ref_stack_count+=(parentRef+1);
+		
+		if (refCount>0) cell.eval_ref_stack_count+=((parentRef>0)?parentRef:1);
 		csvMap.getCsvMap().put(cell.s_idx, cell);
 		return cell;
 	}
