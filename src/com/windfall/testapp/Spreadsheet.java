@@ -23,14 +23,8 @@ public class Spreadsheet {
 	private static final Logger logger = Logger.getLogger(Spreadsheet.class.getName());
 	
 	//APP IDENTIFICATION
-	private static final Map<String,String> P_DATA = new TreeMap<>();
-	static {
-		P_DATA.put("NAME", "SPREADSHEET");
-		P_DATA.put("VERSION", "1.0.0");
-	}
-	public static Map<String,String> getProgramData() {
-		return P_DATA;
-	}
+	private static final String NAME = "SPREADSHEET";
+	private static final String VERSION = "1.0.0.";
 
 	public CSVFileParserOutput processCSVFile(Path p) {
 		CSVFileParser fp = new CSVFileParser();
@@ -38,7 +32,7 @@ public class Spreadsheet {
 		try {
 			cfpo= fp.csvToMap(p);
 		} catch (IOException | FieldCountMismatchException e) {
-			logger.warning(e.getMessage());
+			logger.severe(e.getMessage());
 			System.exit(-1); //file should be checked
 		}
 		return cfpo;	
@@ -49,6 +43,7 @@ public class Spreadsheet {
 	}
 
 	public void run() {
+		
 		CSVFILES file = CSVFILES.GENERIC_DATA;
 		Spreadsheet s = new Spreadsheet();
 		CSVFileParserOutput cfpo = s.processCSVFile(file.path());
@@ -70,9 +65,15 @@ public class Spreadsheet {
 
 
 	public static void main(String[] args) throws FieldCountMismatchException {
-		logger.info("Spreadsheet Evaluate");
+		long start = System.currentTimeMillis();
+		//initialize logging
+		LoggingConfig lc=new LoggingConfig();
+		Logger.getGlobal().info(String.format("%n%-20s%s%n%-20s%s", "Name", NAME, "Version", VERSION));
+		lc.init();
+		//initialise spreadsheet
 		Spreadsheet s = new Spreadsheet();
 		s.run();
+		Logger.getGlobal().info(String.format("Execution Time: %.2f%n",(System.currentTimeMillis()-start)/1000.0));
 	}
 
 }

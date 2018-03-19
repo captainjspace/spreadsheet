@@ -14,7 +14,7 @@ public class ProcessorEvalResults {
 	
 	
 	public String dump() {
-		String fmt = "%s%n\t%-20s%5s%n\t%-20s%-20s%n\t%-20s%-20s%n\t%-20s%s%n";
+		String fmt = "%n%s%n\t%-20s%5s%n\t%-20s%-20s%n\t%-20s%-20s%n\t%-20s%s%n";
 		String[] keys = {"ProcessorEvalResults", "Complete:","Start Formula:","EndFormula:","Evaluated Value:"};
 		return String.format(fmt, 
 				keys[0],

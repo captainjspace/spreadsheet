@@ -17,7 +17,7 @@ import com.windfall.testapp.processors.IndexToSpeadsheetLocationMapper;
 
 public class CSVFileParser {
 
-	private static final Logger logger = Logger.getGlobal(); //.getLogger(CSVFileParser.class.getName());
+	private static final Logger LOG = Logger.getLogger(CSVFileParser.class.getName());
 	
 	private CSVMap csvMap = new CSVMap();
 	private FileStats fs = new FileStats();
@@ -31,7 +31,7 @@ public class CSVFileParser {
 		Charset charset = Charset.forName("UTF-8");
 		
 		try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
-			
+			fs.path=path.toString();
 			//input consistency check
 		    int maxFields=0;
 		    int rowFields;  
@@ -57,7 +57,7 @@ public class CSVFileParser {
 		        	fs.allRowsHaveSameFieldCount=(!fs.allRowsHaveSameFieldCount);
 		        	
 		        } else if ( rowFields!=maxFields && maxFields!=0) {
-		        	
+		        	fs.maxFieldsInRow = maxFields;
 		        	String msg = String.format("Check Data File: Row #%d contains %d fields", 
 		        			fs.rowCount, rowFields);
 		        	throw new FieldCountMismatchException(msg);
@@ -68,10 +68,10 @@ public class CSVFileParser {
 		    }
 		    fs.maxFieldsInRow = maxFields;
 		} catch (IOException x) {
-		    logger.warning(String.format("IOException: %n%s%n", x));
+		    LOG.warning(String.format("IOException: %n%s%n", x));
 		} finally {
 			if (scanner != null) scanner.close();
-			logger.info(String.format("File Stats:%n%s",fs.getStats()));
+			LOG.info(fs.getStats());
 		}
 
 		return new CSVFileParserOutput(fs, csvMap);

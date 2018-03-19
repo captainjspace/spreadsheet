@@ -22,6 +22,26 @@ public class CellData {
 		this.calculated=false;
 	}
 	
+	public String formatCellData() {
+	
+		String fmt = "%n%s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n";
+		String[] keys = {"Cell Data:","Index:","Row:", "Column:","Spreadsheet Location:","Text:","Evaluated Formula:",
+				"Reference Resolve Attemped:","Successfully Calculated:", "Value:", "Total Ref Count:", "Highest Cell Stack Count:"};
+		return String.format(fmt, 
+				keys[0],
+				keys[1],this.idx,
+				keys[2],this.r,
+				keys[3],this.c,
+				keys[4],this.s_idx,
+				keys[5],this.text,
+				keys[6],this.evaluated_formula,
+				keys[7],this.resolved,
+				keys[8],this.calculated,
+				keys[9],this.evaluated_value,
+				keys[10],this.eval_ref_count,
+				keys[11],this.eval_ref_stack_count
+				);
+	}
 	@Override
 	public String toString() {
 		return "CellData [idx=" + idx + ", r=" + r + ", c=" + c + ", s_idx=" + s_idx + ", text=" + text

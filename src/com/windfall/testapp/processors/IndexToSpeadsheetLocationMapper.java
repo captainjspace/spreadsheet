@@ -1,8 +1,12 @@
 package com.windfall.testapp.processors;
 
+import java.util.logging.Logger;
+
 import com.windfall.testapp.models.CellData;
 
 public class IndexToSpeadsheetLocationMapper {
+	
+	private static final Logger LOG = Logger.getLogger(IndexToSpeadsheetLocationMapper.class.getName());
 	
 
 	/**
@@ -13,6 +17,7 @@ public class IndexToSpeadsheetLocationMapper {
 	public CellData getCellReference (final CellData cd) {
 		CellData _cd = cd;
 		_cd.s_idx=getCellReference(cd.r,cd.c);
+		LOG.fine(String.format("Mapped: %d,%d -> %s%n", cd.r,cd.c,cd.s_idx));
 		return _cd;
 	}
 	

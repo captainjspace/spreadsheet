@@ -18,7 +18,7 @@ public class CSVFileWriter {
 	}
 
 	public void write(String output) {
-		logger.info(String.format("Writing to %s%n", outPath));
+		logger.info(String.format("%nWriting to %s%n", outPath));
 		try (BufferedWriter writer = Files.newBufferedWriter(outPath,charset)) {
 			writer.write(output);
 			writer.flush();

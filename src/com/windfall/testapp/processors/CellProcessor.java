@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+
 import com.windfall.testapp.exception.CircularReferenceException;
 import com.windfall.testapp.models.CSVMap;
 import com.windfall.testapp.models.CellData;
@@ -14,7 +15,7 @@ import com.windfall.testapp.models.ProcessorEvalResults;
  */
 public class CellProcessor {
 
-	private static final Logger logger = Logger.getLogger(CellProcessor.class.getName());
+	private static final Logger LOG = Logger.getLogger(CellProcessor.class.getName());
 	
 	public static ProcessorEvalResults eval (CellData cd) {
 		ProcessorEvalResults per = new ProcessorEvalResults();
@@ -25,7 +26,7 @@ public class CellProcessor {
 			per.complete = true;
 			per.endFormula = per.startFormula;
 		} catch (Exception e) {
-			logger.info(String.format("Cell still has references:%n%-10s%-10s", per.startFormula, cd.s_idx));
+			LOG.fine(String.format("Cell still has references:%n%-10s%-10s", per.startFormula, cd.s_idx));
 		}
 		
 		return per;
@@ -111,7 +112,7 @@ public class CellProcessor {
 				}
 			}.parse(); 
 		} catch (Exception e) {
-			logger.info(String.format("Expression Error: %s%n, s"));
+			LOG.info(String.format("Expression Error: %s%n, s"));
 			return -1000000;
 		}
 	}
@@ -121,22 +122,22 @@ public class CellProcessor {
 	 */
 	public CellData resolveReferences(CellData cell, CSVMap csvMap) throws CircularReferenceException {
 		List<String> elements = Arrays.asList(cell.evaluated_formula.trim().split("(?<=[-+*/()])|(?=[-+*/()])"));
-		//check for operands only
-		//formula assemblye
-		logger.info(cell.toString());
+		//check for operands only?
+		//formula assembly
+		LOG.fine(cell.formatCellData());
 		StringBuilder formula = new StringBuilder();
 		int refCount=0;
 		int parentRef=0;
 		for (String s : elements) {
 			if (s.toUpperCase().equals(cell.s_idx)) {
-				String msg = String.format("Circular Reference Exception: %n%s5n", cell.toString());
+				String msg = String.format("Circular Reference Exception: %nGetting Cell:%s%n%s5n", s, cell.formatCellData());
 	        	throw new CircularReferenceException(msg);
 			}
 			if ( csvMap.getCsvMap().containsKey(s) ) {
 				int r = csvMap.getCsvMap().get(s).eval_ref_stack_count;
 				parentRef = (r>parentRef)? r :parentRef; //imperfect but pick largest stack
 				refCount++;
-				logger.info(String.format("Getting Cell: %s%n",s));
+				LOG.info(String.format("Getting Cell: %s%n",s));
 				formula.append("(").append(csvMap.getCsvMap().get(s).evaluated_formula).append(")");
 			} else formula.append(s);
 		}

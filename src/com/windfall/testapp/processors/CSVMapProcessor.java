@@ -11,7 +11,7 @@ import com.windfall.testapp.models.ProcessorEvalResults;
 
 public class CSVMapProcessor {
 
-	private static final Logger logger = Logger.getGlobal();
+	private static final Logger LOG = Logger.getLogger(CSVMapProcessor.class.getName());
 	
 	private CellProcessor cp = new CellProcessor();
 
@@ -19,14 +19,18 @@ public class CSVMapProcessor {
 
 		//recursion or loops ... hmmm
 		int counter=1;
+		long j = csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count();
+		long k;
 		do {
-			logger.info(String.format("process Map resolve - eval loop %d%n",counter));
+			LOG.info(String.format("Map resolve - eval loop %d%n, %d still uncalc'd",counter, j));
 			resolveMap(csvMap);
 			evalMap(csvMap);
-			if (++counter>=7) break;
+			k=csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count();
+			if (j==k || ++counter>=7)  break;
+			j=k;
 		}
-		while (csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count() > 0);
-		logger.info( String.format("Resolved in %d loops%n", counter));
+		while (j > 0);
+		LOG.info( String.format("Resolved in %d loops%n", counter-1));
 	}
 
 	public void resolveMap(CSVMap csvMap) throws CircularReferenceException{
@@ -35,7 +39,12 @@ public class CSVMapProcessor {
 
 		_csvMap.entrySet().stream().filter(e->!e.getValue().calculated).forEach( cell -> {
 			CellData cd = cell.getValue();
-			cd = cp.resolveReferences(cd, csvMap);
+			try {
+			  cd = cp.resolveReferences(cd, csvMap);
+			} catch (CircularReferenceException c) {
+				//LOG.warning(cd.formatCellData());
+				throw c;
+			}
 			cd.resolved=true;
 			_csvMap.put(cd.s_idx, cd);
 		});
@@ -50,11 +59,12 @@ public class CSVMapProcessor {
 
 		_csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).forEach( cell  -> {
 			ProcessorEvalResults evalResults = CellProcessor.eval(cell.getValue());
-			logger.info(evalResults.dump());
+			LOG.fine(evalResults.dump());
 			cell.getValue().evaluted_value = evalResults.evaluatedValue;
 			if (evalResults.complete) {
 				cell.getValue().calculated =true;
-				logger.info(String.format("Cell: %s calculated", cell.getValue().evaluted_value));
+				LOG.info(String.format("Cell: %s calculated", cell.getValue().evaluted_value));
+				LOG.info(cell.getValue().formatCellData());
 			}
 		});
 
