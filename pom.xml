@@ -20,22 +20,6 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18.1</version>
-				<configuration>
-					<systemPropertyVariables>
-						<java.util.logging.config.class>
-							com.windfall.testapp.LoggingConfig
-						</java.util.logging.config.class>
-
-						<!-- If you prefer a file this will work too -->
-						<!--<java.util.logging.config.file> -->
-						<!--src/test/resources/logging.properties -->
-						<!--</java.util.logging.config.file> -->
-					</systemPropertyVariables>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 </project>

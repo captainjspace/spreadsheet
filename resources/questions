@@ -3,3 +3,4 @@ Questions:
 * I have default test files - csv_input , csv_output dirs
 ** How do we want to pass files as args?
 * Not specifically optimized.
+* not resolving for quotes/commas within quotes, is that ok?

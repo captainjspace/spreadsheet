@@ -119,6 +119,7 @@ public class test_Spreadsheet {
 	}
 	
 
+	
 	public static void main (String[] args) {
 		
 		test_CellProcessor();
@@ -128,8 +129,8 @@ public class test_Spreadsheet {
 		test_MapToGrid();
 		test_FileWrite();
 		test_GridToFile(CsvTestFiles.MORE_REFERENCES);
-		//test_bulkrun();
-		//test_main();
+		test_bulkrun();
+		test_main();
 
 
 	}

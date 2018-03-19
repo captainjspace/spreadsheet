@@ -67,11 +67,13 @@ public class CSVFileParser {
 		        fs.cellCount+=rowFields;
 		    }
 		    fs.maxFieldsInRow = maxFields;
+		    LOG.info(fs.getStats());
+		    reader.close();
 		} catch (IOException x) {
 		    LOG.warning(String.format("IOException: %n%s%n", x));
+		    throw x;
 		} finally {
 			if (scanner != null) scanner.close();
-			LOG.info(fs.getStats());
 		}
 
 		return new CSVFileParserOutput(fs, csvMap);

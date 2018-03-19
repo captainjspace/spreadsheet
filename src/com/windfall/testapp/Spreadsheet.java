@@ -33,7 +33,7 @@ public class Spreadsheet {
 			cfpo= fp.csvToMap(p);
 		} catch (IOException | FieldCountMismatchException e) {
 			logger.severe(e.getMessage());
-			System.exit(-1); //file should be checked
+			//System.exit(-1); //file should be checked
 		}
 		return cfpo;	
 	}
@@ -57,12 +57,13 @@ public class Spreadsheet {
 		
 		Spreadsheet s = new Spreadsheet();
 		CSVFileParserOutput cfpo = s.processCSVFile(p);
+		if (cfpo.csvMap.getCsvMap().isEmpty()) return;
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();
 		try {
 			mapProcessor.processMap(cfpo.csvMap);
 		} catch (CircularReferenceException e) {
 			logger.warning(e.getMessage());
-			System.exit(-1); //clean circular references
+			return;
 		}
 
 		MapToGrid mtg = new MapToGrid(cfpo);
