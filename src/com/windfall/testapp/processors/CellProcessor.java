@@ -17,7 +17,7 @@ public class CellProcessor {
 
 	private static final Logger LOG = Logger.getLogger(CellProcessor.class.getName());
 	
-	public static ProcessorEvalResults eval (CellData cd) {
+	public ProcessorEvalResults eval (CellData cd) {
 		ProcessorEvalResults per = new ProcessorEvalResults();
 		try {
 			per.startFormula = cd.evaluatedFormula;
@@ -38,7 +38,7 @@ public class CellProcessor {
 	 * I last used in in ParseUtils in my dmpro project to calculate die rolls.
 	 * for this project i've try/catch it - so that a failed eval can lead to another resolve pass
 	 */
-	public static double eval (final String s) {
+	public double eval (final String s) {
 		try {
 			return new Object() {
 

@@ -50,7 +50,7 @@ public class CSVMapProcessor {
 	 * @param csvMap wrapper around map of cell data
 	 * @throws CircularReferenceException
 	 */
-	public void resolveMap(CSVMap csvMap) throws CircularReferenceException{
+	public CSVMap resolveMap(CSVMap csvMap) throws CircularReferenceException{
 
 		//private copy
 		Map<String,CellData> _csvMap = csvMap.getCsvMap();
@@ -67,8 +67,7 @@ public class CSVMapProcessor {
 			_csvMap.put(cd.s_idx, cd);
 		});
 
-		csvMap.setCsvMap(_csvMap); //map update
-		return;
+		return csvMap;
 	}
 
 	/**
@@ -81,7 +80,7 @@ public class CSVMapProcessor {
 		Map<String,CellData> _csvMap = csvMap.getCsvMap();
 
 		_csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).forEach( cell  -> {
-			ProcessorEvalResults evalResults = CellProcessor.eval(cell.getValue());
+			ProcessorEvalResults evalResults = cp.eval(cell.getValue());
 			LOG.fine(evalResults.dump());
 			cell.getValue().evaluatedValue = evalResults.evaluatedValue;
 			if (evalResults.complete) {
