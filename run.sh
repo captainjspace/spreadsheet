@@ -5,4 +5,4 @@ then
     ${cmd}
     exit
 fi
-$cmd $*
+$cmd "$@"
