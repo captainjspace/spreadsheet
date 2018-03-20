@@ -10,6 +10,7 @@ import com.windfall.testapp.models.*;
 import com.windfall.testapp.processors.CSVMapProcessor;
 import com.windfall.testapp.processors.MapToGrid;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -50,7 +51,7 @@ public class Spreadsheet {
 	}
 
 	/* args multiple files */
-	public void run(String ...args) throws Exception{
+	public void run(String ...args) throws Exception {
 		if (args==null||args.length==0) run();
 		// loop args
 		for (String path : args) {
@@ -98,7 +99,12 @@ public class Spreadsheet {
 		
 		//initialize spreadsheet
 		Spreadsheet s = new Spreadsheet();
-		s.run(args);
+		try { 
+		  s.run(args);
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, e.getMessage(), e);
+			throw e;
+		}
 		
 		//log exection time
 		LOG.info(String.format("Execution Time: %.2f%n",(System.currentTimeMillis()-start)/1000.0));

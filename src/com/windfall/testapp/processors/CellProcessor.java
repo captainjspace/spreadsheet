@@ -141,6 +141,7 @@ public class CellProcessor {
 		for (String s : elements) {
 			if (s.toUpperCase().equals(cell.s_idx)) {
 				String msg = String.format("Circular Reference Exception: %nGetting Cell:%s%n%s5n", s, cell.formatCellData());
+				LOG.severe(msg);
 	        	throw new CircularReferenceException(msg);
 			}
 			//check to see if element is in the map

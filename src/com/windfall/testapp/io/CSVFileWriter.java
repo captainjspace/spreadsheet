@@ -32,7 +32,7 @@ public class CSVFileWriter {
 		}
 	}
 	
-	public void write(String output) {
+	public void write(String output) throws IOException {
 		LOG.info(String.format("%nSUCCESS: Writing to %s%n", outPath));
 		try (BufferedWriter writer = Files.newBufferedWriter(outPath,charset)) {
 			writer.write(output);
@@ -40,6 +40,7 @@ public class CSVFileWriter {
 			writer.close();
 		} catch (IOException e) {
 			LOG.severe(e.getMessage());
+			throw e;
 		}
 	}
 }
