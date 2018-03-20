@@ -28,13 +28,14 @@ public class test_Spreadsheet {
 	}
 
 	public static void test_CellProcessor() {
+		CellProcessor cp = new CellProcessor();
 		String [] expr = {
 				"10+5",
 				"20-30+5",
 				"100 + 4 - 56 + 19"
 		};
 		for (String s: expr) 
-			System.out.printf("%s = %.2f%n", s, CellProcessor.eval(s));
+			System.out.printf("%s = %.2f%n", s, cp.eval(s));
 
 
 	}
