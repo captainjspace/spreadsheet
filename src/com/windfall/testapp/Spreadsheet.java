@@ -45,7 +45,7 @@ public class Spreadsheet {
 
 	/* default no args run */
 	public void run() throws Exception {
-		CsvTestFiles file = CsvTestFiles.GENERIC_DATA;
+		CsvTestFiles file = CsvTestFiles.MORE_REFERENCES;
 		run(file.path());
 	}
 
