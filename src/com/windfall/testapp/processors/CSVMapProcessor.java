@@ -63,7 +63,7 @@ public class CSVMapProcessor {
 			try {
 			  cd = cp.resolveReferences(cd, csvMap);
 			} catch (CircularReferenceException c) {
-				//LOG.warning(cd.formatCellData());
+				LOG.severe(cd.formatCellData());
 				throw c;
 			}
 			cd.resolved=true;

@@ -5,8 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.windfall.testapp.Spreadsheet;
-import com.windfall.testapp.exception.CircularReferenceException;
-import com.windfall.testapp.exception.FieldCountMismatchException;
 import com.windfall.testapp.io.CSVFileWriter;
 import com.windfall.testapp.models.CsvTestFiles;
 import com.windfall.testapp.models.CSVFileReaderOutputObjects;
@@ -75,12 +73,9 @@ public class test_Spreadsheet {
 			MapToGrid mtg = new MapToGrid(cfpo.fileStats);
 			mtg.mapToGrid(cfpo.csvMap);
 			System.out.println(mtg.getCSVOutput());
-			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-
-		
 	}
 	
 	public static void test_FileWrite() {
@@ -88,7 +83,11 @@ public class test_Spreadsheet {
 		Path p = Paths.get(CsvTestFiles.MORE_REFERENCES.path().getParent() + "/test_FileWrite.txt");
 		System.out.println(p);
 		CSVFileWriter writer = new CSVFileWriter(p);
-		writer.write("test");
+		try {
+		  writer.write("test");
+		} catch (IOException e) {
+			System.out.println("Failed to write test file");
+		}
 	}
 
 	public static void test_GridToFile(CsvTestFiles f) {
@@ -125,10 +124,7 @@ public class test_Spreadsheet {
 		System.out.println( mapper.getCellReference(100, 100).toString() );
 	}
 	
-
-	
 	public static void main (String[] args) throws Exception {
-		
 		test_CellProcessor();
 		test_CSVMap();
 		test_IndexToSpeadsheetLocationMapper();
@@ -138,7 +134,5 @@ public class test_Spreadsheet {
 		test_GridToFile(CsvTestFiles.MORE_REFERENCES);
 		test_bulkrun();
 		test_main();
-
-
 	}
 }

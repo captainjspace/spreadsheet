@@ -31,7 +31,7 @@ public class CSVFileReader {
 			size = fc.size();
 			fc.close();
 		} catch (IOException e) {
-			LOG.warning("Could not get file size - expect IOException on read");
+			LOG.severe("Could not get file size - expect IOException on read");
 			throw e;
 		}
 		return size;
@@ -85,6 +85,7 @@ public class CSVFileReader {
 		        	fs.allRowsHaveSameFieldCount=(!fs.allRowsHaveSameFieldCount);
 		        	//build error string
 		        	String msg = String.format("FieldCountMismatchException: Row #%d contains %d fields", fs.rowCount, rowFields);
+		        	LOG.severe(msg);
 		        	throw new FieldCountMismatchException(msg);
 		        }
 		        
