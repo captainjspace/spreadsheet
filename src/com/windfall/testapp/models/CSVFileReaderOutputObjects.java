@@ -5,8 +5,8 @@ package com.windfall.testapp.models;
  * @author joshualandman
  *
  */
-public class CSVFileParserOutput {
-	public CSVFileParserOutput(FileStats fs, CSVMap csvMap) {
+public class CSVFileReaderOutputObjects {
+	public CSVFileReaderOutputObjects(FileStats fs, CSVMap csvMap) {
 		this.csvMap=csvMap;
 		this.fileStats=fs;
 	}

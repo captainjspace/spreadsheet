@@ -7,9 +7,9 @@ package com.windfall.testapp.models;
 public class CellData {
 	
 	public long idx;
-	public int r,c, evaluated_value, eval_ref_stack_count, eval_ref_count; //index, row, col
-	public String s_idx, text, evaluated_formula; //spreadsheet location
-	public double evaluted_value;
+	public int r,c, evalRefStackCount, evalRefCount; //index, row, col
+	public String s_idx, text, evaluatedFormula; //spreadsheet location
+	public double evaluatedValue;
 	public boolean resolved, calculated;
 	
 	public CellData(String s, long idx, int row, int col) {
@@ -17,7 +17,7 @@ public class CellData {
 		this.r=row;
 		this.c=col;
 		this.text=s;
-		this.evaluated_formula=s;
+		this.evaluatedFormula=s;
 		this.resolved=false;
 		this.calculated=false;
 	}
@@ -34,19 +34,19 @@ public class CellData {
 				keys[3],this.c,
 				keys[4],this.s_idx,
 				keys[5],this.text,
-				keys[6],this.evaluated_formula,
+				keys[6],this.evaluatedFormula,
 				keys[7],this.resolved,
 				keys[8],this.calculated,
-				keys[9],this.evaluated_value,
-				keys[10],this.eval_ref_count,
-				keys[11],this.eval_ref_stack_count
+				keys[9],this.evaluatedValue,
+				keys[10],this.evalRefCount,
+				keys[11],this.evalRefStackCount
 				);
 	}
 	@Override
 	public String toString() {
-		return "CellData [idx=" + idx + ", r=" + r + ", c=" + c + ", s_idx=" + s_idx + ", text=" + text
-				+ ", evaluated_formula=" + evaluated_formula + ", evaluted_value=" + evaluted_value
-				+ ", eval_ref_stack_count=" + eval_ref_stack_count + ", eval_ref_count=" + eval_ref_count
-				+ ", resolved=" + resolved + ", calculated=" + calculated + "]";
+		return "CellData [idx=" + idx + ", r=" + r + ", c=" + c + ", evalRefStackCount=" + evalRefStackCount
+				+ ", evalRefCount=" + evalRefCount + ", s_idx=" + s_idx + ", text=" + text + ", evaluatedFormula="
+				+ evaluatedFormula + ", evaluatedValue=" + evaluatedValue + ", resolved=" + resolved + ", calculated="
+				+ calculated + "]";
 	}
 }

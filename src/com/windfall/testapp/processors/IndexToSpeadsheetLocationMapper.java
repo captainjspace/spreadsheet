@@ -10,7 +10,7 @@ public class IndexToSpeadsheetLocationMapper {
 	
 
 	/**
-	 * Convenience function for cleaner use
+	 * Convenience function for cleaner use - modifying copy and returning
 	 * @param cd cell data containing location data
 	 * @return cellData with spreadsheet location added
 	 */
@@ -22,7 +22,7 @@ public class IndexToSpeadsheetLocationMapper {
 	}
 	
 	/**
-	 * Creates spreadsheet location from r,col
+	 * Creates spreadsheet location from r,col.
 	 * @param r row
 	 * @param col col
 	 * @return string representing cell

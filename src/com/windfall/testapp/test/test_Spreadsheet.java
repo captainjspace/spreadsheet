@@ -1,5 +1,6 @@
 package com.windfall.testapp.test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -8,7 +9,7 @@ import com.windfall.testapp.exception.CircularReferenceException;
 import com.windfall.testapp.exception.FieldCountMismatchException;
 import com.windfall.testapp.io.CSVFileWriter;
 import com.windfall.testapp.models.CsvTestFiles;
-import com.windfall.testapp.models.CSVFileParserOutput;
+import com.windfall.testapp.models.CSVFileReaderOutputObjects;
 import com.windfall.testapp.models.CSVMap;
 import com.windfall.testapp.processors.CSVMapProcessor;
 import com.windfall.testapp.processors.CellProcessor;
@@ -22,7 +23,7 @@ public class test_Spreadsheet {
 		String [] args = {};
 		try {
 			Spreadsheet.main(args);
-		} catch (FieldCountMismatchException e) {
+		} catch (Exception e) {
 			
 			e.printStackTrace();
 		}
@@ -40,38 +41,46 @@ public class test_Spreadsheet {
 
 	}
 
-	public static void test_CSVMap() {
+	public static void test_CSVMap()  {
 		Spreadsheet s = new Spreadsheet();
-		CSVMap csvMap = s.getCSVMap(CsvTestFiles.SIMPLE.path());
-		csvMap.dump();
+		CSVMap csvMap;
+		try {
+			csvMap = s.getCSVMap(CsvTestFiles.SIMPLE.path());
+			csvMap.dump();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
 	}
 
 	public static void test_CSVMapProcessor() {
 		Spreadsheet s = new Spreadsheet();
-		CSVMap csvMap = s.getCSVMap(CsvTestFiles.MORE_REFERENCES.path());
-		CSVMapProcessor mapProcessor = new CSVMapProcessor();
+		CSVMap csvMap;
 		try {
+			csvMap = s.getCSVMap(CsvTestFiles.MORE_REFERENCES.path());
+			CSVMapProcessor mapProcessor = new CSVMapProcessor();
 			mapProcessor.processMap(csvMap);
 			csvMap.dump();
-		} catch (CircularReferenceException e) {
+		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
 	}
 	
 	public static void test_MapToGrid() {
 		Spreadsheet s = new Spreadsheet();
-		CSVFileParserOutput cfpo = s.processCSVFile(CsvTestFiles.MORE_REFERENCES.path());
-		CSVMapProcessor mapProcessor = new CSVMapProcessor();
 		try {
+			CSVFileReaderOutputObjects cfpo = s.processCSVFile(CsvTestFiles.MORE_REFERENCES.path());
+			CSVMapProcessor mapProcessor = new CSVMapProcessor();
 			mapProcessor.processMap(cfpo.csvMap);
-		} catch (CircularReferenceException e) {
+			MapToGrid mtg = new MapToGrid(cfpo.fileStats);
+			mtg.mapToGrid(cfpo.csvMap);
+			System.out.println(mtg.getCSVOutput());
+			
+		} catch (Exception e) {
 			System.out.println(e);
 		}
+
 		
-		MapToGrid mtg = new MapToGrid(cfpo);
-		mtg.mapToGrid(cfpo.csvMap);
-		System.out.println(mtg.dump());
 	}
 	
 	public static void test_FileWrite() {
@@ -80,27 +89,25 @@ public class test_Spreadsheet {
 		System.out.println(p);
 		CSVFileWriter writer = new CSVFileWriter(p);
 		writer.write("test");
-		
 	}
-	
+
 	public static void test_GridToFile(CsvTestFiles f) {
 		System.out.printf("TESTING FILE: %s%n",f.path());
 		Spreadsheet s = new Spreadsheet();
-		CSVFileParserOutput cfpo = s.processCSVFile(f.path());
-		CSVMapProcessor mapProcessor = new CSVMapProcessor();
 		try {
+			CSVFileReaderOutputObjects cfpo = s.processCSVFile(f.path());
+			CSVMapProcessor mapProcessor = new CSVMapProcessor();
 			mapProcessor.processMap(cfpo.csvMap);
-		} catch (CircularReferenceException e) {
+			MapToGrid mtg = new MapToGrid(cfpo.fileStats);
+			mtg.mapToGrid(cfpo.csvMap);
+			Path p = Paths.get(f.path().toString() + "-output");
+			CSVFileWriter writer = new CSVFileWriter(p);
+			writer.write(mtg.getCSVOutput());
+		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
-		MapToGrid mtg = new MapToGrid(cfpo);
-		mtg.mapToGrid(cfpo.csvMap);
-		Path p = Paths.get(f.path().toString() + "-output");
-		CSVFileWriter writer = new CSVFileWriter(p);
-		writer.write(mtg.dump());
 	}
-	
+
 	public static void test_bulkrun() {
 		for (CsvTestFiles f : CsvTestFiles.values()) {
 			try { 
@@ -120,7 +127,7 @@ public class test_Spreadsheet {
 	
 
 	
-	public static void main (String[] args) {
+	public static void main (String[] args) throws Exception {
 		
 		test_CellProcessor();
 		test_CSVMap();

@@ -1,21 +1,25 @@
 package com.windfall.testapp;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.windfall.testapp.exception.CircularReferenceException;
 import com.windfall.testapp.exception.FieldCountMismatchException;
-import com.windfall.testapp.io.CSVFileParser;
+import com.windfall.testapp.io.CSVFileReader;
 import com.windfall.testapp.io.CSVFileWriter;
 import com.windfall.testapp.models.*;
 import com.windfall.testapp.processors.CSVMapProcessor;
 import com.windfall.testapp.processors.MapToGrid;
 
-
 import java.util.logging.Logger;
 
-
+/**
+ * Spreadsheet eval tool -reads input CSV, resolves references in spreadsheet notation, evaluates cells
+ * outputs CSV in floats
+ * replaces all non expressions with 0.00
+ * Exits on Exceptions
+ * @author joshualandman
+ *
+ */
 public class Spreadsheet {
 
 	private static final Logger LOG = Logger.getLogger(Spreadsheet.class.getName());
@@ -24,76 +28,80 @@ public class Spreadsheet {
 	private static final String NAME = "SPREADSHEET";
 	private static final String VERSION = "1.0.0.";
 
-	public CSVFileParserOutput processCSVFile(Path p) throws IOException, FieldCountMismatchException {
-		CSVFileParser fp = new CSVFileParser();
-		CSVFileParserOutput cfpo=null;
-		try {
-			cfpo= fp.csvToMap(p);
-		} catch (IOException | FieldCountMismatchException e) {
-			LOG.severe(e.getMessage());
-			throw e;
-		}
-		return cfpo;	
+	/**
+	 * isolated for exceptions and testing, reference to Reader unnecessary
+	 * @param p path
+	 * @return CSVFileReaderOutputObjects
+	 * @throws Exception
+	 */
+	public CSVFileReaderOutputObjects processCSVFile(Path p) throws Exception {
+		return new CSVFileReader().csvToMap(p);
 	}
 
-	public CSVMap getCSVMap (Path p) throws IOException, FieldCountMismatchException {
+	/* test entry only */
+	public CSVMap getCSVMap (Path p) throws Exception {
 		return processCSVFile(p).csvMap;
 	}
 
-	/* default */
-	public void run(){
-		CsvTestFiles file = CsvTestFiles.MORE_REFERENCES;
+	/* default no args run */
+	public void run() throws Exception {
+		CsvTestFiles file = CsvTestFiles.GENERIC_DATA;
 		run(file.path());
 	}
 
-	/* args */
-	public void run(String ...args){
-
+	/* args multiple files */
+	public void run(String ...args) throws Exception{
 		if (args==null||args.length==0) run();
+		// loop args
 		for (String path : args) {
 			run(Paths.get(path));
+			LOG.info("END: " + path);
 		}
 	}
 
-	/* main execution */
-	public void run(Path p) {
+	/* main runner  */
+	public void run(Path p) throws Exception {
 
-		CSVFileParserOutput cfpo = null;
-
-		try {
-			cfpo = this.processCSVFile(p);
-		} catch (IOException | FieldCountMismatchException e1) {
-			//LOG.severe(e1.getMessage());
-			return;
-		}
-
-		if (cfpo == null) return;
+		//parse input returns (FileStats, CSVMap)
+		CSVFileReaderOutputObjects parserOutput = processCSVFile(p);
+		
+		//process CSVMap CellData
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();
-		try {
-			mapProcessor.processMap(cfpo.csvMap);
-		} catch (CircularReferenceException e) {
-			LOG.warning(e.getMessage());
-			return;
-		}
-
-		MapToGrid mtg = new MapToGrid(cfpo);
+		mapProcessor.processMap(parserOutput.csvMap);
+		
+		//initialize map to grid - uses FileStats name, r, c
+		MapToGrid mtg = new MapToGrid(parserOutput.fileStats);
+		
+		//map the "CSVMap" to the grid[][]
+		mtg.mapToGrid(parserOutput.csvMap);
+		
+		//write the grid to file
 		CSVFileWriter writer = new CSVFileWriter(p);
-
-		mtg.mapToGrid(cfpo.csvMap);
-		writer.write(mtg.dump());
+		writer.write(mtg.getCSVOutput());
+		return;
 	}
 
 
-	public static void main(String[] args) throws FieldCountMismatchException {
-		long start = System.currentTimeMillis();
+	/**
+	 * App Main entry 
+	 * @param args, list of valid file paths.  
+	 * @throws FieldCountMismatchException
+	 */
+	public static void main(String[] args) throws Exception {
+		//start 
+		long start = System.currentTimeMillis(); 
+		
 		//initialize logging
 		LoggingConfig lc=new LoggingConfig();
-		Logger.getGlobal().info(String.format("%n%-20s%s%n%-20s%s", "Name", NAME, "Version", VERSION));
+		LOG.info(String.format("%n\t%-20s%s%n\t%-20s%s", "Name", NAME, "Version", VERSION));
 		lc.init();
-		//initialise spreadsheet
+		
+		//initialize spreadsheet
 		Spreadsheet s = new Spreadsheet();
 		s.run(args);
-		Logger.getGlobal().info(String.format("Execution Time: %.2f%n",(System.currentTimeMillis()-start)/1000.0));
+		
+		//log exection time
+		LOG.info(String.format("Execution Time: %.2f%n",(System.currentTimeMillis()-start)/1000.0));
 	}
 
 }

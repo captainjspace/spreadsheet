@@ -15,7 +15,8 @@ public enum CsvTestFiles {
 	SELF_REFERENCE(Paths.get("resources/csv_input/self-circular-reference.csv")),
 	CROSS_REFERENCE(Paths.get("resources/csv_input/cross-circular-reference.csv")),
 	GENERIC_DATA(Paths.get("resources/csv_input/datafile.csv")),
-	BAD_FILE(Paths.get("resources/csv_input/bad-name.csv"));
+	BAD_FILE(Paths.get("resources/csv_input/bad-name.csv")),
+	POM_FILE(Paths.get("pom.xml"));;
 
 	private Path path;
 	

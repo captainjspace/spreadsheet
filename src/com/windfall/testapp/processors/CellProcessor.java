@@ -20,12 +20,13 @@ public class CellProcessor {
 	public static ProcessorEvalResults eval (CellData cd) {
 		ProcessorEvalResults per = new ProcessorEvalResults();
 		try {
-			per.startFormula = cd.evaluated_formula;
+			per.startFormula = cd.evaluatedFormula;
 			per.complete = false;
 			per.evaluatedValue = eval(per.startFormula);
 			per.complete = true;
 			per.endFormula = per.startFormula;
 		} catch (Exception e) {
+			//catch failed eval
 			LOG.fine(String.format("Cell still has references:%n%-10s%-10s", per.startFormula, cd.s_idx));
 		}
 		
@@ -33,7 +34,9 @@ public class CellProcessor {
 	}
 	
 	/**
-	 * Expression Eval
+	 * Expression Eval - I pulled this code from somewhere and modified it 2 years ago
+	 * I last used in in ParseUtils in my dmpro project to calculate die rolls.
+	 * for this project i've try/catch it - so that a failed eval can lead to another resolve pass
 	 */
 	public static double eval (final String s) {
 		try {
@@ -41,6 +44,7 @@ public class CellProcessor {
 
 				int pos = -1, ch;
 
+				//increment position
 				void nextChar() {
 					ch =  ( ++pos < s.length() )  ? s.charAt(pos) : -1; //end
 				}
@@ -55,6 +59,7 @@ public class CellProcessor {
 					return false; // move to next test
 				}
 
+				//parse op
 				double parse() {
 					nextChar();
 					double x = parseExpression(); 
@@ -113,7 +118,7 @@ public class CellProcessor {
 			}.parse(); 
 		} catch (Exception e) {
 			LOG.info(String.format("Expression Error: %s%n, s"));
-			return -1000000;
+			return -999999999; //marker 
 		}
 	}
 
@@ -121,31 +126,41 @@ public class CellProcessor {
 	 * Resolve References
 	 */
 	public CellData resolveReferences(CellData cell, CSVMap csvMap) throws CircularReferenceException {
-		List<String> elements = Arrays.asList(cell.evaluated_formula.trim().split("(?<=[-+*/()])|(?=[-+*/()])"));
-		//check for operands only?
-		//formula assembly
+		
+		//split on expressions, factors, parents
+		List<String> elements = Arrays.asList(cell.evaluatedFormula.trim().split("(?<=[-+*/()])|(?=[-+*/()])"));
 		LOG.fine(cell.formatCellData());
+		
+		//formula assembly - we'll resolve first tier replacements
+		//because of the randomized nature of putting cells to hashkeys
+		//this is reasonably efficient - not as efficient as chasing a reference to the end and replacing the wholechain though
 		StringBuilder formula = new StringBuilder();
-		int refCount=0;
-		int parentRef=0;
+		int refCount=0, parentRef=0; //these are for internal use
+		
+		//check to see if any elements are self referencing.
 		for (String s : elements) {
 			if (s.toUpperCase().equals(cell.s_idx)) {
 				String msg = String.format("Circular Reference Exception: %nGetting Cell:%s%n%s5n", s, cell.formatCellData());
 	        	throw new CircularReferenceException(msg);
 			}
+			//check to see if element is in the map
 			if ( csvMap.getCsvMap().containsKey(s) ) {
-				int r = csvMap.getCsvMap().get(s).eval_ref_stack_count;
+				int r = csvMap.getCsvMap().get(s).evalRefStackCount; //get the referenced stackcoutn
 				parentRef = (r>parentRef)? r :parentRef; //imperfect but pick largest stack
 				refCount++;
 				LOG.info(String.format("Getting Cell: %s%n",s));
-				formula.append("(").append(csvMap.getCsvMap().get(s).evaluated_formula).append(")");
-			} else formula.append(s);
+				//this is the substitution
+				formula.append("(").append(csvMap.getCsvMap().get(s).evaluatedFormula).append(")");
+			} else formula.append(s); //or just put the non key back in place
 		}
-		cell.evaluated_formula=formula.toString();
-		cell.eval_ref_count += refCount;
 		
-		if (refCount>0) cell.eval_ref_stack_count+=((parentRef>0)?parentRef:1);
-		csvMap.getCsvMap().put(cell.s_idx, cell);
-		return cell;
+		//update cell data
+		cell.evaluatedFormula=formula.toString();
+		cell.evalRefCount += refCount; //count what we replaced this round
+		if (refCount>0) cell.evalRefStackCount+=((parentRef>0)?parentRef:1);
+		
+		/* REPLACE THE CELL IN THE MAP */
+		csvMap.getCsvMap().put(cell.s_idx, cell); 
+		return cell; //for caller.
 	}
 }
