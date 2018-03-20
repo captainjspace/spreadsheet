@@ -30,21 +30,18 @@ public class CSVMapProcessor {
 	 */
 	public void processMap(final CSVMap csvMap) throws CircularReferenceException{
 
-		//recursion or loops ...
 		int counter=0;
-		//all cells on first pass
-		long k, j = csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count();
+		long k=0, j = csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count();
 		
-		do {
-			++counter;
-			LOG.info(String.format("Map resolve/eval loop #%d:  #%d still uncalc'd",counter, j));
+		//definitely running twice
+		for(;;) {
+			LOG.info(String.format("Map resolve/eval loop #%d:  %d still uncalc'd",++counter, j));
 			resolveMap(csvMap);
 			evalMap(csvMap);
-			//check calc
 			k=csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count();
-			if (j==k)  break; //abort if we're no longer calculating
-			j=k; 
-		} while (j > 0);
+			if (j==k)  break; else j=k; //abort if we're no longer calculating
+		}
+		
 		LOG.info( String.format("Resolved in %d loops%nConverting %d cells to 0.00", counter, k));
 	}
 
