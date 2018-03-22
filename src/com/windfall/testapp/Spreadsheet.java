@@ -28,12 +28,12 @@ public class Spreadsheet {
 
 	//APP IDENTIFICATION
 	private static final String NAME = "SPREADSHEET";
-	private static final String VERSION = "1.0.0.";
+	private static final String VERSION = "1.0.1";
 
 	//File Stats
-	public int rowCount;
+	public int m;
+	public int n;
 	public int cellCount;
-	public int maxFieldsInRow;
 	public boolean allRowsHaveSameFieldCount=false;
 	public long size;
 	public String path;
@@ -46,7 +46,7 @@ public class Spreadsheet {
 	public static void main(String[] args) throws Exception {
 		//start 
 		long start = System.currentTimeMillis(); 
-		System.err.println(String.format("%n\t%-20s%s%n\t%-20s%s", "Name", NAME, "Version", VERSION));
+		System.err.printf(String.format("%n\t%-20s%s%n\t%-20s%s%n", "Name", NAME, "Version", VERSION));
 
 		//initialize logging
 		LoggingConfig lc=new LoggingConfig();
@@ -67,7 +67,7 @@ public class Spreadsheet {
 
 	/* default no args run */
 	public void run() throws Exception {
-		run(Paths.get("resources/csv_input/references-stack.csv"));
+		run(Paths.get("resources/csv_input/_input.csv_"));
 	}
 
 	/* args multiple files */
@@ -92,7 +92,7 @@ public class Spreadsheet {
 
 		//initialize map to grid, map the "CSVMap" to the grid[][]
 		MapToGrid mtg = new MapToGrid();
-		mtg.initGrid(this.rowCount,this.maxFieldsInRow);
+		mtg.initGrid(this.m,this.n);
 		mtg.mapToGrid(csvMap);
 
 		//send CSV to stdout
@@ -112,9 +112,9 @@ public class Spreadsheet {
 				keys[0],
 				keys[1],this.path,
 				keys[2],this.size,
-				keys[3],this.rowCount,
+				keys[3],this.m,
 				keys[4],this.cellCount,
-				keys[5],this.maxFieldsInRow,
+				keys[5],this.n,
 				keys[6],this.allRowsHaveSameFieldCount);
 	}
 
