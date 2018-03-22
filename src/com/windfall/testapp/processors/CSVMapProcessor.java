@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import com.windfall.testapp.exception.CircularReferenceException;
-import com.windfall.testapp.models.CSVMap;
 import com.windfall.testapp.models.CellData;
 import com.windfall.testapp.models.ProcessorEvalResults;
 
@@ -28,17 +27,17 @@ public class CSVMapProcessor {
 	 * @param csvMap mapa of cell data
 	 * @throws CircularReferenceException
 	 */
-	public void processMap(final CSVMap csvMap) throws CircularReferenceException{
+	public void processMap(final Map<String,CellData> csvMap) throws CircularReferenceException{
 
 		int counter=0;
-		long k=0, j = csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count();
+		long k=0, j = csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).count();
 		
 		//definitely running twice
 		for(;;) {
 			LOG.info(String.format("Map resolve/eval loop #%d:  %d still uncalc'd",++counter, j));
 			resolveMap(csvMap);
 			evalMap(csvMap);
-			k=csvMap.getCsvMap().entrySet().stream().filter(e -> !e.getValue().calculated).count();
+			k=csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).count();
 			if (j==k)  break; else j=k; //abort if we're no longer calculating
 		}
 		
@@ -50,24 +49,20 @@ public class CSVMapProcessor {
 	 * @param csvMap wrapper around map of cell data
 	 * @throws CircularReferenceException
 	 */
-	public CSVMap resolveMap(CSVMap csvMap) throws CircularReferenceException{
+	public void resolveMap(Map<String,CellData> csvMap) throws CircularReferenceException{
 
-		//private copy
-		Map<String,CellData> _csvMap = csvMap.getCsvMap();
-
-		_csvMap.entrySet().stream().filter(e->!e.getValue().calculated).forEach( cell -> {
+		csvMap.entrySet().stream().filter(e->!e.getValue().calculated).forEach( cell -> {
 			CellData cd = cell.getValue();
 			try {
-			  cd = cp.resolveReferences(cd, csvMap);
+			  cp.resolveReferences(cd, csvMap);
 			} catch (CircularReferenceException c) {
 				LOG.severe(cd.formatCellData());
 				throw c;
 			}
 			cd.resolved=true;
-			_csvMap.put(cd.s_idx, cd);
+			csvMap.put(cd.s_idx, cd);
 		});
-
-		return csvMap;
+		
 	}
 
 	/**
@@ -75,21 +70,18 @@ public class CSVMapProcessor {
 	 * @param csvMap wrapper around cell data
 	 * @return the wrapper
 	 */
-	public CSVMap evalMap(CSVMap csvMap) {
+	public void evalMap(Map<String,CellData> csvMap) {
 
-		Map<String,CellData> _csvMap = csvMap.getCsvMap();
-
-		_csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).forEach( cell  -> {
-			ProcessorEvalResults evalResults = cp.eval(cell.getValue());
+		csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).forEach( cell  -> {
+			CellData cd = cell.getValue();
+			ProcessorEvalResults evalResults = cp.eval(cd);
 			LOG.fine(evalResults.dump());
-			cell.getValue().evaluatedValue = evalResults.evaluatedValue;
+			cd.evaluatedValue = evalResults.evaluatedValue;
 			if (evalResults.complete) {
-				cell.getValue().calculated =true;
-				LOG.fine(String.format("Cell: %s calculated", cell.getValue().evaluatedValue));
-				LOG.info(cell.getValue().formatCellData());
+				cd.calculated =true;
+				LOG.fine(String.format("Cell: %s calculated", cd.evaluatedValue));
+				LOG.info(cd.formatCellData());
 			}
 		});
-
-		return csvMap;
 	}
 }
