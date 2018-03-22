@@ -12,6 +12,7 @@ public class CSVFileWriter {
 	
 	private static final Logger LOG = Logger.getLogger(CSVFileWriter.class.getName());
 	private static final String OUTPUT_DIR = "output/csv_output/";
+	private static final String OUTPUT_FILE = "_output.csv_";
 	
 	private Charset charset = Charset.forName("UTF-8");
 	private Path outPath;
@@ -23,7 +24,7 @@ public class CSVFileWriter {
 	public void init(Path p) {
 		String outputFile = p.getFileName().toString();
 		int pos = outputFile.lastIndexOf(".");
-		if (pos > 0)  outputFile = outputFile.substring(0, pos) + "-output.csv";
+		if (pos > 0)  outputFile = outputFile.substring(0, pos) + OUTPUT_FILE;
 		this.outPath=Paths.get(OUTPUT_DIR + outputFile);
 		try {
 			Files.createDirectories(this.outPath.getParent());

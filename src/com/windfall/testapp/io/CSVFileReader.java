@@ -61,10 +61,10 @@ public class CSVFileReader {
 		    
 		    //rows
 		    while ((line = reader.readLine()) != null) {
-		    	if (s.rowCount==0) checkFirstLine(line, s);//CSV check
+		    	if (s.m==0) checkFirstLine(line, s);//CSV check
 		    	
 		    	rowFields=0;
-		    	s.rowCount+=1;
+		    	s.m+=1;
 		        scanner = new Scanner(line);
 		        scanner.useDelimiter(",");
 		        
@@ -72,22 +72,22 @@ public class CSVFileReader {
 		        while (scanner.hasNext()) {
 		        	rowFields+=1;
 		        	long idx = s.cellCount+rowFields;
-		        	cd = new CellData(scanner.next(), idx, s.rowCount, rowFields);
+		        	cd = new CellData(scanner.next(), idx, s.m, rowFields);
 		        	cellMapper.addCellReference(cd);
 		        	csvMap.put(cd.s_idx, cd);
 		        }
 		        
 		        /* check to see if we are on the first row to set field count */
-		        if (rowFields>s.maxFieldsInRow && s.maxFieldsInRow==0) {
+		        if (rowFields>s.n && s.n==0) {
 		        	//this should execute only on the first row
-		        	s.maxFieldsInRow=rowFields;
+		        	s.n=rowFields;
 		        	s.allRowsHaveSameFieldCount=true;
-		        } else if ( rowFields!=s.maxFieldsInRow && s.maxFieldsInRow!=0) {  
+		        } else if ( rowFields!=s.n && s.n!=0) {  
 		        	//throw mismatch , track largest
-		        	s.maxFieldsInRow = Math.max(rowFields,s.maxFieldsInRow);
+		        	s.n = Math.max(rowFields,s.n);
 		        	s.allRowsHaveSameFieldCount=(!s.allRowsHaveSameFieldCount);
 		        	//build error string
-		        	String msg = String.format("FieldCountMismatchException: Row #%d contains %d fields", s.rowCount, rowFields);
+		        	String msg = String.format("FieldCountMismatchException: Row #%d contains %d fields", s.m, rowFields);
 		        	LOG.severe(msg);
 		        	throw new FieldCountMismatchException(msg);
 		        }
