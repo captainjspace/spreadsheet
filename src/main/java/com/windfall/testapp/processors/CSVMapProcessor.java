@@ -29,18 +29,17 @@ public class CSVMapProcessor {
 	public void processMap(final Map<String,CellData> csvMap) throws CircularReferenceException{
 
 		int counter=0;
-
 		long k=0, j = csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).count();
+
 		//definitely running twice
 		for(;;) {
 			LOG.info(String.format("Map resolve/eval loop #%d:  %d still uncalc'd",++counter, j));
 			resolveMap(csvMap);
 			evalMap(csvMap);
-
 			k=csvMap.entrySet().stream().filter(e -> !e.getValue().calculated).count();
 			if (j==k)  break; else j=k; //abort if we're no longer calculating
 		}
-		
+
 		LOG.info( String.format("Resolved in %d loops%nConverting %d cells to 0.00", counter, k));
 	}
 
@@ -49,12 +48,12 @@ public class CSVMapProcessor {
 	 * @param csvMap wrapper around map of cell data
 	 * @throws CircularReferenceException
 	 */
-	public void resolveMap(Map<String,CellData> csvMap) throws CircularReferenceException{
+	public void resolveMap(Map<String,CellData> csvMap) throws CircularReferenceException {
 
 		csvMap.entrySet().stream().filter(e->!e.getValue().calculated).forEach( cell -> {
 			CellData cd = cell.getValue();
 			try {
-			  cp.resolveReferences(cd, csvMap);
+				cp.resolveReferences(cd, csvMap);
 			} catch (CircularReferenceException c) {
 				LOG.severe(cd.formatCellData());
 				throw c;
@@ -62,7 +61,9 @@ public class CSVMapProcessor {
 			cd.resolved=true;
 			csvMap.put(cd.s_idx, cd);
 		});
+
 	}
+
 
 	/**
 	 * evaluate expressions for non-calculated cells
