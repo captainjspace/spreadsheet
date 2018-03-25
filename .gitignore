@@ -1,6 +1,5 @@
 target
 output
-log
 *.log
 .classpath
 .settings
