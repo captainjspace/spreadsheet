@@ -67,6 +67,7 @@ public class Spreadsheet {
 
 	/* default no args run */
 	public void run() throws Exception {
+
 		run(Paths.get("src/main/resources/csv_input/_input.csv_"));
 	}
 
@@ -103,6 +104,7 @@ public class Spreadsheet {
 		writer.write(mtg.getCSVOutput());
 	}
 
+
 	//For Reporting MisMatched Field Counts
 	public String getFileStats() {
 		String fmt = "%n%s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%s";
@@ -116,6 +118,5 @@ public class Spreadsheet {
 				keys[5],this.n,
 				keys[6],this.allRowsHaveSameFieldCount);
 	}
-
 }
 
