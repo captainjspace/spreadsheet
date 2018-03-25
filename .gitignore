@@ -1,3 +1,10 @@
 target
 output
+<<<<<<< HEAD
+log/*.log
+.classpath
+.settings
+*.orig
+=======
 log
+>>>>>>> master
