@@ -21,10 +21,7 @@ public class CSVFileReader {
 
 	private static final Logger LOG = Logger.getLogger(CSVFileReader.class.getName());
 	
-	//private CSVMap csvMap = new CSVMap();
 	private Map<String,CellData> csvMap = new HashMap<>();
-	
-	//private FileStats fs = new FileStats();
 	private IndexToSpeadsheetLocationMapper cellMapper = new IndexToSpeadsheetLocationMapper();
 
 	public long getFileSize(Path p) throws IOException{
@@ -73,7 +70,6 @@ public class CSVFileReader {
 		        	rowFields+=1;
 		        	long idx = s.cellCount+rowFields;
 		        	cd = new CellData(scanner.next(), idx, s.m, rowFields);
-//		        	cd.setCellReference(cellMapper.getCellReference(cd.r, cd.c));
 		        	cd.s_idx = cellMapper.getCellReference(cd.r,cd.c);
 		        	csvMap.put(cd.s_idx, cd);
 		        }
@@ -92,10 +88,9 @@ public class CSVFileReader {
 		        	LOG.severe(msg);
 		        	throw new FieldCountMismatchException(msg);
 		        }
-		        
 		        s.cellCount+=rowFields; //increment cell count
 		    }
-		    LOG.info(s.getFileStats());
+		    LOG.fine(s.getFileStats());
 		    reader.close();
 		} catch (IOException x) {
 		    LOG.severe(String.format("IOException: %n%s%n", x));
@@ -103,7 +98,7 @@ public class CSVFileReader {
 		} finally {
 			if (scanner != null) scanner.close();
 		}
-
+		
 		return csvMap;
 	}
 

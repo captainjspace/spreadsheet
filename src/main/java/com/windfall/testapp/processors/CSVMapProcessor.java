@@ -16,7 +16,6 @@ import com.windfall.testapp.models.ProcessorEvalResults;
 public class CSVMapProcessor {
 
 	private static final Logger LOG = Logger.getLogger(CSVMapProcessor.class.getName());
-	
 	private CellProcessor cp = new CellProcessor();
 
 	/**

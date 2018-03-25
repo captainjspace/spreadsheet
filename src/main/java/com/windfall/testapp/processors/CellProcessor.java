@@ -21,7 +21,7 @@ import com.windfall.testapp.models.ProcessorEvalResults;
 public class CellProcessor {
 
 	private static final Logger LOG = Logger.getLogger(CellProcessor.class.getName());
-	
+	//used for one liner eval
 	private ScriptEngineManager mgr = new ScriptEngineManager();
 	private ScriptEngine engine = mgr.getEngineByName("JavaScript");
 	

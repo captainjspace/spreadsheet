@@ -18,10 +18,10 @@ public class CSVFileWriter {
 	private Path outPath;
 	
 	public CSVFileWriter(Path p) {
-		init(p);
+		initOutputPath(p);
 	}
 
-	public void init(Path p) {
+	public void initOutputPath(Path p) {
 		String outputFile = p.getFileName().toString();
 		int pos = outputFile.lastIndexOf(".");
 		if (pos > 0)  outputFile = outputFile.substring(0, pos) + OUTPUT_FILE;

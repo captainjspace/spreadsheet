@@ -70,7 +70,7 @@ public class Spreadsheet {
 		run(Paths.get("src/main/resources/csv_input/_input.csv_"));
 	}
 
-	/* args multiple files */
+	/* args multiple files on command line */
 	public void run(String ...args) throws Exception {
 		if (args==null||args.length==0) run();
 		// loop args
@@ -101,7 +101,6 @@ public class Spreadsheet {
 		//write the grid to file
 		CSVFileWriter writer = new CSVFileWriter(p);
 		writer.write(mtg.getCSVOutput());
-
 	}
 
 	//For Reporting MisMatched Field Counts

@@ -2,21 +2,9 @@ package com.windfall.testapp.processors;
 
 import java.util.logging.Logger;
 
-import com.windfall.testapp.models.CellData;
-
 public class IndexToSpeadsheetLocationMapper {
 	
 	private static final Logger LOG = Logger.getLogger(IndexToSpeadsheetLocationMapper.class.getName());
-	
-
-	/**
-	 * Convenience function for cleaner use - modifying copy and returning
-	 * @param cd cell data containing location data
-	 * @return cellData with spreadsheet location added
-	 */
-	public void addCellReference (final CellData cd) {
-		cd.s_idx=getCellReference(cd.r,cd.c);
-	}
 	
 	/**
 	 * Creates spreadsheet location from r,col.
