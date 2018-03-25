@@ -67,7 +67,6 @@ public class Spreadsheet {
 
 	/* default no args run */
 	public void run() throws Exception {
-
 		run(Paths.get("src/main/resources/csv_input/_input.csv_"));
 	}
 
@@ -117,6 +116,6 @@ public class Spreadsheet {
 				keys[4],this.cellCount,
 				keys[5],this.n,
 				keys[6],this.allRowsHaveSameFieldCount);
-	}
-}
 
+}
+}
