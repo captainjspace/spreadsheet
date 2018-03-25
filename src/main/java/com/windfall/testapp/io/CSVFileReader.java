@@ -73,7 +73,8 @@ public class CSVFileReader {
 		        	rowFields+=1;
 		        	long idx = s.cellCount+rowFields;
 		        	cd = new CellData(scanner.next(), idx, s.m, rowFields);
-		        	cellMapper.addCellReference(cd);
+//		        	cd.setCellReference(cellMapper.getCellReference(cd.r, cd.c));
+		        	cd.s_idx = cellMapper.getCellReference(cd.r,cd.c);
 		        	csvMap.put(cd.s_idx, cd);
 		        }
 		        

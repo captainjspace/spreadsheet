@@ -67,7 +67,7 @@ public class Spreadsheet {
 
 	/* default no args run */
 	public void run() throws Exception {
-		run(Paths.get("resources/csv_input/_input.csv_"));
+		run(Paths.get("src/main/resources/csv_input/_input.csv_"));
 	}
 
 	/* args multiple files */

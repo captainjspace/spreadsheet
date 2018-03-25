@@ -14,25 +14,23 @@ public class IndexToSpeadsheetLocationMapper {
 	 * @param cd cell data containing location data
 	 * @return cellData with spreadsheet location added
 	 */
-	public CellData addCellReference (CellData cd) {
+	public void addCellReference (final CellData cd) {
 		cd.s_idx=getCellReference(cd.r,cd.c);
-		LOG.fine(String.format("Mapped: %d,%d -> %s%n", cd.r,cd.c,cd.s_idx));
-		return cd;
 	}
 	
 	/**
 	 * Creates spreadsheet location from r,col.
-	 * @param r row
-	 * @param col col
+	 * @param m row
+	 * @param n col
 	 * @return string representing cell
 	 */
-	public String getCellReference(int r, int col) {
+	public String getCellReference(int m, int n) {
 		
-		String[] result = new String[col];
+		String[] result = new String[n];
 		String colName = "";
 
 		//build stack
-		for(int i = 0; i < col; i++) {
+		for(int i = 0; i < n; i++) {
 
 			char c = (char)('A' + (i % 26));
 			colName = c + "";
@@ -42,6 +40,7 @@ public class IndexToSpeadsheetLocationMapper {
 			result[i] = colName;
 		}
 		//last entry + row
-		return colName + r ;
+		LOG.fine(String.format("Mapped %d,%d -> %s%d%n", m,n,colName,m));
+		return colName + m ;
 	}
 }

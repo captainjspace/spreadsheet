@@ -1,0 +1,86 @@
+import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.util.List;
+import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
+
+class Parser {
+
+    public enum MathDelim {
+	O_P('('),
+	C_P(')'),
+	DIV('/'),
+	MUL('*'),
+	PLUS('+'),
+	MINUS('-');
+
+	char op;
+
+	MathDelim(char s){
+	    this.op=s;
+	}
+
+	public String sOp() {
+	    return String.valueOf(this.op);
+	}
+	
+	public char op() {
+	    return this.op;
+	}
+    }
+
+    static String s="(((9/3*(7*(5+(((7+5)+2)+((7+5)-3)+(9+7)))/(7+5)))+10)*100)*(9/3*(7*(5+(((7+5)+2)+((7+5)-3)+(9+7)))/(7+5)))";
+
+    public static void main (String [] args) {
+	try { 
+	    System.out.println(tokenize(s));
+	} catch (IOException i) {
+	    i.printStackTrace();
+	}
+    }
+
+
+    public static List<String> tokenize(String s) throws IOException {
+
+	final StreamTokenizer tokenizer = new StreamTokenizer(new StringReader(s));
+	final List<String> tokens = new ArrayList<>();
+	final Map<Integer,Integer> stacky = new TreeMap<>();
+
+	Arrays.asList(MathDelim.values()).stream().forEach( md -> {
+		tokenizer.ordinaryChar(md.op());
+	    });
+
+	int exprStack=0;
+	String tokenData="";
+	int count=0;
+		
+	while (tokenizer.nextToken() != StreamTokenizer.TT_EOF) {
+	    count++;	
+	    switch(tokenizer.ttype) {
+	    case StreamTokenizer.TT_NUMBER:
+		tokens.add(String.valueOf(tokenizer.nval));
+		tokenData = String.valueOf(tokenizer.nval);
+		break;
+	    case StreamTokenizer.TT_WORD:
+;
+		tokenData = tokenizer.sval;				 
+		tokens.add(tokenizer.sval);
+		break;
+	    default:  // operator
+		if (tokenizer.sval.equals(MathDelim.O_P.sOp())) exprStack++;
+		else if ( tokenizer.sval.equals(MathDelim.C_P.sOp())) exprStack--;
+		tokens.add(String.valueOf((char) tokenizer.ttype));
+	    }
+	    stacky.put(count,exprStack);
+			
+	}
+	stacky.entrySet().stream().forEach(e -> {
+		System.out.printf("%d\t\t%s%n", e.getKey(), e.getValue());
+	    });
+	
+	    return tokens;
+	    }
+    }
