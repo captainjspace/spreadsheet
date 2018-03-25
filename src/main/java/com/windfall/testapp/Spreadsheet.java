@@ -101,6 +101,7 @@ public class Spreadsheet {
 		//write the grid to file
 		CSVFileWriter writer = new CSVFileWriter(p);
 		writer.write(mtg.getCSVOutput());
+
 	}
 
 
@@ -116,6 +117,8 @@ public class Spreadsheet {
 				keys[4],this.cellCount,
 				keys[5],this.n,
 				keys[6],this.allRowsHaveSameFieldCount);
+	}
+
 
 }
-}
+

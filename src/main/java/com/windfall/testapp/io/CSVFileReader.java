@@ -20,7 +20,6 @@ import com.windfall.testapp.processors.IndexToSpeadsheetLocationMapper;
 public class CSVFileReader {
 
 	private static final Logger LOG = Logger.getLogger(CSVFileReader.class.getName());
-	
 	private Map<String,CellData> csvMap = new HashMap<>();
 	private IndexToSpeadsheetLocationMapper cellMapper = new IndexToSpeadsheetLocationMapper();
 
@@ -98,7 +97,6 @@ public class CSVFileReader {
 		} finally {
 			if (scanner != null) scanner.close();
 		}
-		
 		return csvMap;
 	}
 
