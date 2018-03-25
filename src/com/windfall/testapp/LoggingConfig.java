@@ -45,7 +45,7 @@ public class LoggingConfig {
 			app.removeHandler(app.getHandlers()[0]); //remove default handler
 			app.setLevel(Level.ALL);
 			app.addHandler(fileHandler);
-			app.addHandler(consoleHandler);
+			//app.addHandler(consoleHandler);
 			Logger.getGlobal().info(String.format("%n\t%-20s%20s", "Log File", LOGFILE));
 
 		} catch (Exception e) {

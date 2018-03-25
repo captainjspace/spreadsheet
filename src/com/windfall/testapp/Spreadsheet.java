@@ -10,6 +10,7 @@ import com.windfall.testapp.models.*;
 import com.windfall.testapp.processors.CSVMapProcessor;
 import com.windfall.testapp.processors.MapToGrid;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,27 +28,46 @@ public class Spreadsheet {
 
 	//APP IDENTIFICATION
 	private static final String NAME = "SPREADSHEET";
-	private static final String VERSION = "1.0.0.";
+	private static final String VERSION = "1.0.1";
+
+	//File Stats
+	public int m;
+	public int n;
+	public int cellCount;
+	public boolean allRowsHaveSameFieldCount=false;
+	public long size;
+	public String path;
 
 	/**
-	 * isolated for exceptions and testing, reference to Reader unnecessary
-	 * @param p path
-	 * @return CSVFileReaderOutputObjects
-	 * @throws Exception
+	 * App Main entry 
+	 * @param args, list of valid file paths.  
+	 * @throws FieldCountMismatchException
 	 */
-	public CSVFileReaderOutputObjects processCSVFile(Path p) throws Exception {
-		return new CSVFileReader().csvToMap(p);
-	}
+	public static void main(String[] args) throws Exception {
+		//start 
+		long start = System.currentTimeMillis(); 
+		System.err.printf(String.format("%n\t%-20s%s%n\t%-20s%s%n", "Name", NAME, "Version", VERSION));
 
-	/* test entry only */
-	public CSVMap getCSVMap (Path p) throws Exception {
-		return processCSVFile(p).csvMap;
+		//initialize logging
+		LoggingConfig lc=new LoggingConfig();
+		lc.init();
+
+		//initialize spreadsheet
+		Spreadsheet s = new Spreadsheet();
+		try { 
+			s.run(args);
+		} catch (Exception e) {
+			LOG.log(Level.SEVERE, e.getMessage(), e);
+			throw e;
+		}
+
+		//log exection time
+		LOG.info(String.format("Execution Time: %.2f%n",(System.currentTimeMillis()-start)/1000.0));
 	}
 
 	/* default no args run */
 	public void run() throws Exception {
-		CsvTestFiles file = CsvTestFiles.MORE_REFERENCES;
-		run(file.path());
+		run(Paths.get("resources/csv_input/_input.csv_"));
 	}
 
 	/* args multiple files */
@@ -63,51 +83,39 @@ public class Spreadsheet {
 	/* main runner  */
 	public void run(Path p) throws Exception {
 
-		//parse input returns (FileStats, CSVMap)
-		CSVFileReaderOutputObjects parserOutput = processCSVFile(p);
-		
-		//process CSVMap CellData
+		//sending self ref for capturing file stats
+		Map<String,CellData> csvMap =  new CSVFileReader().csvToMap(p, this);
+
+		//process map directly
 		CSVMapProcessor mapProcessor = new CSVMapProcessor();
-		mapProcessor.processMap(parserOutput.csvMap);
-		
-		//initialize map to grid - uses FileStats name, r, c
-		MapToGrid mtg = new MapToGrid(parserOutput.fileStats);
-		
-		//map the "CSVMap" to the grid[][]
-		mtg.mapToGrid(parserOutput.csvMap);
-		
+		mapProcessor.processMap(csvMap);
+
+		//initialize map to grid, map the "CSVMap" to the grid[][]
+		MapToGrid mtg = new MapToGrid();
+		mtg.initGrid(this.m,this.n);
+		mtg.mapToGrid(csvMap);
+
+		//send CSV to stdout
+		System.out.println(mtg.getCSVOutput());
+
 		//write the grid to file
 		CSVFileWriter writer = new CSVFileWriter(p);
 		writer.write(mtg.getCSVOutput());
-		return;
+
 	}
 
-
-	/**
-	 * App Main entry 
-	 * @param args, list of valid file paths.  
-	 * @throws FieldCountMismatchException
-	 */
-	public static void main(String[] args) throws Exception {
-		//start 
-		long start = System.currentTimeMillis(); 
-		
-		//initialize logging
-		LoggingConfig lc=new LoggingConfig();
-		LOG.info(String.format("%n\t%-20s%s%n\t%-20s%s", "Name", NAME, "Version", VERSION));
-		lc.init();
-		
-		//initialize spreadsheet
-		Spreadsheet s = new Spreadsheet();
-		try { 
-		  s.run(args);
-		} catch (Exception e) {
-			LOG.log(Level.SEVERE, e.getMessage(), e);
-			throw e;
-		}
-		
-		//log exection time
-		LOG.info(String.format("Execution Time: %.2f%n",(System.currentTimeMillis()-start)/1000.0));
+	//For Reporting MisMatched Field Counts
+	public String getFileStats() {
+		String fmt = "%n%s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%-20s%n\t%-30s%s";
+		String[] keys = {"File Stats:","Path:","File Size:","Row Count:", "Cell Count:","Max/Expected Field Count:","AllRowsHaveSameFieldCount:"};
+		return String.format(fmt, 
+				keys[0],
+				keys[1],this.path,
+				keys[2],this.size,
+				keys[3],this.m,
+				keys[4],this.cellCount,
+				keys[5],this.n,
+				keys[6],this.allRowsHaveSameFieldCount);
 	}
 
 }

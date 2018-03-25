@@ -14,11 +14,10 @@ public class IndexToSpeadsheetLocationMapper {
 	 * @param cd cell data containing location data
 	 * @return cellData with spreadsheet location added
 	 */
-	public CellData getCellReference (final CellData cd) {
-		CellData _cd = cd;
-		_cd.s_idx=getCellReference(cd.r,cd.c);
+	public CellData addCellReference (CellData cd) {
+		cd.s_idx=getCellReference(cd.r,cd.c);
 		LOG.fine(String.format("Mapped: %d,%d -> %s%n", cd.r,cd.c,cd.s_idx));
-		return _cd;
+		return cd;
 	}
 	
 	/**
@@ -37,7 +36,7 @@ public class IndexToSpeadsheetLocationMapper {
 
 			char c = (char)('A' + (i % 26));
 			colName = c + "";
-			if(i > 25){
+			if(i > 25) {
 				colName =  result[(i / 26) - 1] + "" + c;
 			}
 			result[i] = colName;
